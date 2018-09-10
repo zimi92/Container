@@ -7,8 +7,8 @@ class Contener
 public:
 	Contener::Contener(): m_size(10), m_element_number(0)
 	{
-		std::shared_ptr<T[]> cont(new T[10]);
-		m_contener = std::move(cont);
+		std::unique_ptr<T[]> containerPrefab(new T[m_size]);
+		m_contener = std::move(containerPrefab);
 	}
 
 	void push_back(T item)
@@ -17,14 +17,30 @@ public:
 		{
 			m_contener.get()[m_element_number++] = item;
 		}
-		/*else
+		else
 		{
-			for (auto iteratorOfContenerElements)
+			m_size = m_size * 2;
+			std::unique_ptr<T[]> containerPrefab(new T[m_size]);
+			for (int iteratorOfContenerElements = 0; iteratorOfContenerElements < m_element_number; ++iteratorOfContenerElements)
 			{
-				*contener = iteratorOfContenerElements;
-				++contener;
+				containerPrefab.get()[iteratorOfContenerElements] = m_contener.get()[iteratorOfContenerElements];
 			}
-		}*/
+			containerPrefab.get()[m_element_number++] = item;
+
+			m_contener = std::move(containerPrefab);
+		}
+	}
+
+	T& operator [] (int index) 
+	{
+		if (index < m_element_number) 
+		{
+			return m_contener.get()[index];
+		}
+		else 
+		{
+			throw "out of range";
+		}
 	}
 
 	T read(int index) 
